@@ -235,12 +235,7 @@ def model_builder(hp):
 
     model2.add(tf.keras.layers.Flatten())
     
-    
-    if DO_TUNE:
-        hp_units = hp.Int('units', min_value = 128, max_value = 512, step = 32) # 224
-        model2.add(tf.keras.layers.Dense(hp_units, activation='relu'))
-    else:
-        model2.add(tf.keras.layers.Dense(256, activation='relu'))
+    model2.add(tf.keras.layers.Dense(256, activation='relu'))
     model2.add(tf.keras.layers.BatchNormalization())
     
     hp_p_last = hp.Float('keep_p_last', min_value = 0.4, max_value = 0.45, step = 0.05)  
