@@ -281,6 +281,7 @@ if DO_TRAIN:
                              callbacks = [learning_rate_reduction, earlystopper])
 else:
     model.load_weights(WEIGHTS_NAME)
+print("Model performance on the validation set:")
 model.evaluate(Xval, Yval, verbose=2)
 
 #================================================================================
@@ -373,7 +374,7 @@ results = np.argmax(results,axis = 1)
 results = pd.Series(results,name="Label")
 submission = pd.concat([pd.Series(range(1,Ntest+1),name = "ImageId"),results],axis = 1)
 submission.to_csv("cnn_mnist_datagen.csv",index=False)
-
+print("Model performance on the test set:")
 model.evaluate(Xtest, Ytest, verbose=2)
 if DO_TRAIN:
     print(history.history)
