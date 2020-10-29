@@ -11,7 +11,7 @@ import pandas as pd
 import cv2
 import tensorflow as tf
 import matplotlib.pyplot as plt
-%matplotlib inline
+#%matplotlib inline
 import seaborn as sns
 
 from keras.callbacks import EarlyStopping
