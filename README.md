@@ -2,8 +2,11 @@
 Image classifier for CIFAR-10 and MNIST type of data
 
 Results with 28-8-4:
-    224: ?
-    256: ?
+
+    * 224: (0.0088, 0.9977), (0.0269, 0.9953)
+
+    * 256: ?
+    
 # References
 
 
