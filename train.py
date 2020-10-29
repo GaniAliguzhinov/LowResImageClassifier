@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from keras.callbacks import EarlyStopping
-!pip install -q -U keras-tuner
+#!pip install -q -U keras-tuner
 import kerastuner as kt
 #================================================================================
 # Global Constants
