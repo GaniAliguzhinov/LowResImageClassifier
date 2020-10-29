@@ -29,7 +29,7 @@ INPUT_HEIGHT = 28
 CHANNELS = 1
 SHOW_PLOTS = True
 BS = 64
-SCHEDULE = [2, 1, 1]
+SCHEDULE = [28, 8, 4]
 DO_TRAIN = True
 INITIAL_LR = 0.01
 DO_TUNE = False
@@ -217,20 +217,24 @@ def model_builder(hp):
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Conv2D(32, (5, 5), activation='relu'),
         tf.keras.layers.BatchNormalization(),
-
-        tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
-    #     DropConnect(keep_p_conv),
-
-        tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
-        tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
-        tf.keras.layers.BatchNormalization(),
-
-        tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
-    #     DropConnect(keep_p_conv),
-
-        tf.keras.layers.Flatten()
     ])
+    
+    model2.add(tf.keras.layers.MaxPooling2D(pool_size=(2,2)))
+    
+    hp_p_conv = hp.Float('keep_p_conv', min_value = 0.4, max_value = 0.45, step = 0.05)
+    model2.add(DropConnect(hp_p_conv))
+
+    model2.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
+    model2.add(tf.keras.layers.BatchNormalization())
+    model2.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
+    model2.add(tf.keras.layers.BatchNormalization())
+
+    model2.add(tf.keras.layers.MaxPooling2D(pool_size=(2,2)))
+    
+    model2.add(DropConnect(hp_p_conv))
+
+    model2.add(tf.keras.layers.Flatten())
+    
     
     if DO_TUNE:
         hp_units = hp.Int('units', min_value = 128, max_value = 512, step = 32) # 224
@@ -238,8 +242,9 @@ def model_builder(hp):
     else:
         model2.add(tf.keras.layers.Dense(256, activation='relu'))
     model2.add(tf.keras.layers.BatchNormalization())
-
-#     DropConnect(keep_p_last),
+    
+    hp_p_last = hp.Float('keep_p_last', min_value = 0.4, max_value = 0.45, step = 0.05)  
+    model2.add(DropConnect(hp_p_last))
 
     model2.add(tf.keras.layers.Dense(10))
     
@@ -269,9 +274,10 @@ if DO_TUNE:
     best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 
     print(f"""
-    The optimal number of units in the FC Layer is {best_hps.get('units')}
+    Optimal DropConnect p for convolution is {best_hps.get('keep_p_conv')}, and for the last layer is {best_hps.get('keep_p_last')}
     """)
     model = tuner.hypermodel.build(best_hps)
+    print(tuner.result_summary())
 else:
     model = model_builder(1)
 
@@ -386,13 +392,15 @@ results = np.argmax(results,axis = 1)
 results = pd.Series(results,name="Label")
 submission = pd.concat([pd.Series(range(1,Ntest+1),name = "ImageId"),results],axis = 1)
 submission.to_csv("cnn_mnist_datagen.csv",index=False)
-print("Model performance on the test set:")
-model.evaluate(Xtest, Ytest, verbose=2)
+
 if DO_TRAIN:
     print("Training history:")
     print(history.history)
     print("Saving weights")
     model.save_weights(WEIGHTS_NAME)
+else:
+    print("Model performance on the test set:")
+    model.evaluate(Xtest, Ytest, verbose=2)    
 
 
 
