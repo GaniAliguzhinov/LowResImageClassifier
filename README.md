@@ -1,11 +1,13 @@
 # LowResImageClassifier
 Image classifier for CIFAR-10 and MNIST type of data
 
-Results with 28-8-4:
+Results with 28-8-4 (varying FC layer size, no dropout):
 
     * 224: (0.0088, 0.9977), (0.0269, 0.9953)
 
     * 256: (?, ?), (0.0261, 0.9957)
+    
+Results for various dropout (FC layer has size 256):
     
 # References
 
