@@ -374,8 +374,8 @@ submission = pd.concat([pd.Series(range(1,Ntest+1),name = "ImageId"),results],ax
 submission.to_csv("cnn_mnist_datagen.csv",index=False)
 
 model.evaluate(Xtest, Ytest, verbose=2)
-print(history.history)
 if DO_TRAIN:
+    print(history.history)
     model.save_weights(WEIGHTS_NAME)
 
 
