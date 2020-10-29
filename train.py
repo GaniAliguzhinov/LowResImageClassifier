@@ -2,6 +2,7 @@
 # IMPORTS
 #================================================================================
 import os
+import silence_tensorflow.auto
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
@@ -26,7 +27,7 @@ FROM_FILE = False
 INPUT_WIDTH = 28
 INPUT_HEIGHT = 28
 CHANNELS = 1
-SHOW_PLOTS = True
+SHOW_PLOTS = False
 BS = 64
 SCHEDULE = [2, 1, 1]
 DO_TRAIN = True
