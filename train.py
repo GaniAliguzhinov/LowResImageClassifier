@@ -272,7 +272,8 @@ if DO_TUNE:
     Optimal DropConnect p for convolution is {best_hps.get('keep_p_conv')}, and for the last layer is {best_hps.get('keep_p_last')}
     """)
     model = tuner.hypermodel.build(best_hps)
-    print(tuner.result_summary())
+    tuner.results_summary()
+    tuner.search_space_summary():
 else:
     model = model_builder(1)
 
