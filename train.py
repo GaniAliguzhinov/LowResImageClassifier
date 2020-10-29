@@ -285,15 +285,15 @@ model.evaluate(Xval, Yval, verbose=2)
 #================================================================================
 # TRAINING AND VALIDATION LOSS AND ACCURACY CURVES
 #================================================================================
+if SHOW_PLOTS:
+    fig, ax = plt.subplots(2,1)
+    ax[0].plot(history.history['loss'], color='b', label="Training loss")
+    ax[0].plot(history.history['val_loss'], color='r', label="validation loss",axes =ax[0])
+    legend = ax[0].legend(loc='best', shadow=True)
 
-fig, ax = plt.subplots(2,1)
-ax[0].plot(history.history['loss'], color='b', label="Training loss")
-ax[0].plot(history.history['val_loss'], color='r', label="validation loss",axes =ax[0])
-legend = ax[0].legend(loc='best', shadow=True)
-
-ax[1].plot(history.history['accuracy'], color='b', label="Training accuracy")
-ax[1].plot(history.history['val_accuracy'], color='r',label="Validation accuracy")
-legend = ax[1].legend(loc='best', shadow=True)
+    ax[1].plot(history.history['accuracy'], color='b', label="Training accuracy")
+    ax[1].plot(history.history['val_accuracy'], color='r',label="Validation accuracy")
+    legend = ax[1].legend(loc='best', shadow=True)
 
 #================================================================================
 # CONFUSION MATRIX
@@ -327,12 +327,12 @@ def plot_confusion_matrix(cm, classes,
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
 
+if SHOW_PLOTS:
+    Ypred = np.argmax(tf.nn.softmax(model.predict(Xval)), axis = 1)
 
-Ypred = np.argmax(tf.nn.softmax(model.predict(Xval)), axis = 1)
-
-confusion_mtx = confusion_matrix(Yval, Ypred) 
-# plot the confusion matrix
-plot_confusion_matrix(confusion_mtx, classes = range(10)) 
+    confusion_mtx = confusion_matrix(Yval, Ypred) 
+    # plot the confusion matrix
+    plot_confusion_matrix(confusion_mtx, classes = range(10)) 
 
 #================================================================================
 # SHOWING WRONG PREDICTIONS
