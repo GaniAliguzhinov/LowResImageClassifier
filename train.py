@@ -27,7 +27,7 @@ FROM_FILE = False
 INPUT_WIDTH = 28
 INPUT_HEIGHT = 28
 CHANNELS = 1
-SHOW_PLOTS = False
+SHOW_PLOTS = True
 BS = 64
 SCHEDULE = [2, 1, 1]
 DO_TRAIN = True
@@ -389,7 +389,9 @@ submission.to_csv("cnn_mnist_datagen.csv",index=False)
 print("Model performance on the test set:")
 model.evaluate(Xtest, Ytest, verbose=2)
 if DO_TRAIN:
+    print("Training history:")
     print(history.history)
+    print("Saving weights")
     model.save_weights(WEIGHTS_NAME)
 
 
