@@ -71,6 +71,7 @@ index = [f'index_{num}' for num in range(Nall)]
 YallDf = pd.DataFrame(Yall, columns=columns, index=index)
 if SHOW_PLOTS:
     g = sns.countplot(YallDf['digit'])
+    g.get_figure().savefig('trainingClassDistribution.png')
     
 print("Count of corrupted images in the training set:\n{}\n\nCount of corrupted images in the testing set:\n{}".
           format(np.sum(np.any(np.isnan(Xall.reshape(Nall, -1)), axis=0)), 
@@ -101,6 +102,7 @@ if SHOW_PLOTS:
         ax.set_ylabel(yaxes[idx])
     plt.tight_layout()
     plt.show()
+    plt.savefig('intensitiesHist.png')
     
 #================================================================================
 # SHOWING TRAINING EXAMPLES
@@ -116,6 +118,7 @@ if SHOW_PLOTS:
     plt.tight_layout(False)
     print("Some train images")
     plt.show()  
+    plt.savefig('trainingImages.png')
     
 #================================================================================
 # SHOWING TESTING EXAMPLES
@@ -129,6 +132,7 @@ if SHOW_PLOTS:
     plt.tight_layout(False)
     print("Some test images")
     plt.show()
+    plt.savefig('testingImages.png')
     
 #================================================================================
 # SPLIT TRAINING DATA
@@ -301,6 +305,7 @@ if SHOW_PLOTS:
     ax[1].plot(history.history['accuracy'], color='b', label="Training accuracy")
     ax[1].plot(history.history['val_accuracy'], color='r',label="Validation accuracy")
     legend = ax[1].legend(loc='best', shadow=True)
+    plt.savefig('lossAccuracyCurves.png')
 
 #================================================================================
 # CONFUSION MATRIX
@@ -333,6 +338,7 @@ def plot_confusion_matrix(cm, classes,
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+    plt.savefig('confusionMatrix.png')
 
 if SHOW_PLOTS:
     Ypred = np.argmax(tf.nn.softmax(model.predict(Xval)), axis = 1)
@@ -368,6 +374,7 @@ if SHOW_PLOTS:
     plt.tight_layout(False)
     print("Top Incorrect Predictions")
     plt.show()
+    plt.savefig('incorrect.png')
     
     
 #================================================================================
