@@ -33,6 +33,7 @@ SCHEDULE = [2, 1, 1]
 DO_TRAIN = True
 INITIAL_LR = 0.02
 DO_TUNE = False
+DO_EARLY_STOP = False
 WEIGHTS_NAME = 'MODEL_WEIGHTS'
 
 
@@ -195,7 +196,9 @@ learning_rate_reduction = tf.keras.callbacks.LearningRateScheduler(scheduler)
 
 earlystopper = EarlyStopping(monitor='val_loss', min_delta=0,
                              patience=3, verbose=1, mode='auto')
-        
+callbacks = [learning_rate_reduction]
+if DO_EARLY_STOP:
+    callbacks += [earlystopper]
 #================================================================================
 # MODEL DEFINITION
 #================================================================================
@@ -280,7 +283,7 @@ if DO_TRAIN:
                              epochs = SCHEDULE[0] + 2*SCHEDULE[1] + 4*SCHEDULE[2],
                              validation_data = (Xval, Yval),
                             verbose = 2,
-                             callbacks = [learning_rate_reduction, earlystopper])
+                             callbacks = callbacks)
 else:
     model.load_weights(WEIGHTS_NAME)
 print("Model performance on the validation set:")
