@@ -68,7 +68,9 @@ print("Training data before split: {}\nTest data: {}\nTraining labels before spl
 columns = ['digit']
 index = [f'index_{num}' for num in range(Nall)]
 YallDf = pd.DataFrame(Yall, columns=columns, index=index)
-g = sns.countplot(YallDf['digit'])
+if SHOW_PLOTS:
+    g = sns.countplot(YallDf['digit'])
+    
 print("Count of corrupted images in the training set:\n{}\n\nCount of corrupted images in the testing set:\n{}".
           format(np.sum(np.any(np.isnan(Xall.reshape(Nall, -1)), axis=0)), 
                  np.sum(np.any(np.isnan(Xtest.reshape(Ntest, -1)), axis=0))))
