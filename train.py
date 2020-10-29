@@ -273,7 +273,7 @@ if DO_TUNE:
     """)
     model = tuner.hypermodel.build(best_hps)
     tuner.results_summary()
-    tuner.search_space_summary():
+    tuner.search_space_summary()
 else:
     model = model_builder(1)
 
