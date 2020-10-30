@@ -212,37 +212,34 @@ keep_p_conv = 0.75
 def model_builder(hp):
     model2 = tf.keras.models.Sequential([tf.keras.layers.Lambda(normalize, input_shape=(INPUT_WIDTH,INPUT_HEIGHT,CHANNELS))])
     
-    fsz32 = hp.Int('fsz32', min_value = 2, max_value = 7, step = 1)
-    psz32 = hp.Int('psz32', min_value = 2, max_value = 5, step = 1)
-    fsz64 = hp.Int('fsz64', min_value = 2, max_value = 7, step = 1)
-    psz64 = hp.Int('psz64', min_value = 2, max_value = 5, step = 1)
+    
     
     if DO_TUNE:
-        filterSize32 = fsz32
-        filterSize64 = fsz64
-        poolSize32 = psz32
-        poolSize64 = psz64
+        fsz32 = hp.Int('fsz32', min_value = 2, max_value = 7, step = 1)
+        fsz64 = hp.Int('fsz64', min_value = 2, max_value = 7, step = 1)
+        psz32 = hp.Int('psz32', min_value = 2, max_value = 5, step = 1)
+        psz64 = hp.Int('psz64', min_value = 2, max_value = 5, step = 1)
     else:
-        filterSize32 = 5
-        poolSize32 = 2
-        filterSize64 = 3
-        poolSize64 = 2
+        fsz32 = 5
+        psz32 = 2
+        fsz64 = 3
+        psz64 = 2
 
-    model2.add(tf.keras.layers.Conv2D(32, (filterSize32, filterSize32), activation='relu'))
+    model2.add(tf.keras.layers.Conv2D(32, (fsz32, fsz32), activation='relu'))
     model2.add(tf.keras.layers.BatchNormalization())
-    model2.add(tf.keras.layers.Conv2D(32, (filterSize32, filterSize32), activation='relu'))
+    model2.add(tf.keras.layers.Conv2D(32, (fsz32, fsz32), activation='relu'))
     model2.add(tf.keras.layers.BatchNormalization())    
-    model2.add(tf.keras.layers.MaxPooling2D(pool_size=(poolSize32, poolSize32)))
+    model2.add(tf.keras.layers.MaxPooling2D(pool_size=(psz32, psz32)))
     
 #     hp_p_conv = hp.Float('keep_p_conv', min_value = 0.05, max_value = 1.0, step = 0.05)
 #     model2.add(DropConnect(hp_p_conv))
 
-    model2.add(tf.keras.layers.Conv2D(64, (filterSize64, filterSize64), activation='relu'))
+    model2.add(tf.keras.layers.Conv2D(64, (fsz64, fsz64), activation='relu'))
     model2.add(tf.keras.layers.BatchNormalization())
-    model2.add(tf.keras.layers.Conv2D(64, (filterSize64, filterSize64), activation='relu'))
+    model2.add(tf.keras.layers.Conv2D(64, (fsz64, fsz64), activation='relu'))
     model2.add(tf.keras.layers.BatchNormalization())
 
-    model2.add(tf.keras.layers.MaxPooling2D(pool_size=(poolSize64, poolSize64)))
+    model2.add(tf.keras.layers.MaxPooling2D(pool_size=(psz64, psz64)))
     
 #     model2.add(DropConnect(hp_p_conv))
 
