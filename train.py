@@ -213,33 +213,45 @@ def model_builder(hp):
     model2 = tf.keras.models.Sequential([tf.keras.layers.Lambda(normalize, input_shape=(INPUT_WIDTH,INPUT_HEIGHT,CHANNELS))])
     
     
+    psz64 = 2
+    psz32 = 2
+    psz128 = 2
     
     if DO_TUNE:
-        fsz32 = hp.Int('fsz32', min_value = 2, max_value = 7, step = 1)
-        fsz64 = hp.Int('fsz64', min_value = 2, max_value = 7, step = 1)
-        psz32 = hp.Int('psz32', min_value = 2, max_value = 5, step = 1)
-        psz64 = hp.Int('psz64', min_value = 2, max_value = 5, step = 1)
+        fsz32 = hp.Int('fsz32', min_value = 3, max_value = 5, step = 2)
+        fsz64 = hp.Int('fsz64', min_value = 3, max_value = 5, step = 2)       
+        fsz128 = hp.Int('fsz64', min_value = 3, max_value = 5, step = 2)             
+        ncv32 = hp.Int('fsz64', min_value = 1, max_value = 3, step = 1)       
+        ncv64 = hp.Int('fsz64', min_value = 0, max_value = 2, step = 1)   
+        ncv128 = hp.Int('fsz64', min_value = 0, max_value = 2, step = 1)   
     else:
         fsz32 = 5
-        psz32 = 2
         fsz64 = 3
-        psz64 = 2
-
-    model2.add(tf.keras.layers.Conv2D(32, (fsz32, fsz32), activation='relu'))
-    model2.add(tf.keras.layers.BatchNormalization())
-    model2.add(tf.keras.layers.Conv2D(32, (fsz32, fsz32), activation='relu'))
-    model2.add(tf.keras.layers.BatchNormalization())    
-    model2.add(tf.keras.layers.MaxPooling2D(pool_size=(psz32, psz32)))
+        fsz128 = 3
+        ncv32 = 2
+        ncv64 = 2
+        ncv128 = 0
+      
+    for i in range(ncv32):
+        model2.add(tf.keras.layers.Conv2D(32, (fsz32, fsz32), activation='relu', padding = 'same'))
+        model2.add(tf.keras.layers.BatchNormalization())
+    if ncv32 > 0:
+        model2.add(tf.keras.layers.MaxPooling2D(pool_size=(psz32, psz32)))
     
 #     hp_p_conv = hp.Float('keep_p_conv', min_value = 0.05, max_value = 1.0, step = 0.05)
 #     model2.add(DropConnect(hp_p_conv))
 
-    model2.add(tf.keras.layers.Conv2D(64, (fsz64, fsz64), activation='relu'))
-    model2.add(tf.keras.layers.BatchNormalization())
-    model2.add(tf.keras.layers.Conv2D(64, (fsz64, fsz64), activation='relu'))
-    model2.add(tf.keras.layers.BatchNormalization())
-
-    model2.add(tf.keras.layers.MaxPooling2D(pool_size=(psz64, psz64)))
+    for i in range(ncv64):
+        model2.add(tf.keras.layers.Conv2D(64, (fsz64, fsz64), activation='relu', padding = 'same'))
+        model2.add(tf.keras.layers.BatchNormalization())
+    if ncv64 > 0:
+        model2.add(tf.keras.layers.MaxPooling2D(pool_size=(psz64, psz64)))
+    
+    for i in range(ncv128):
+        model2.add(tf.keras.layers.Conv2D(128, (fsz128, fsz128), activation='relu', padding = 'same'))
+        model2.add(tf.keras.layers.BatchNormalization())
+    if mcv128 > 0:
+        model2.add(tf.keras.layers.MaxPooling2D(pool_size=(psz128, psz128)))
     
 #     model2.add(DropConnect(hp_p_conv))
 
@@ -279,8 +291,8 @@ if DO_TUNE:
     best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 
     print(f"""
-    Optimal filter sizes: {best_hps.get('fsz32')} for convolution 32, and {best_hps.get('fsz64')} for convolution 64.
-    Optimal MaxPool sizes: {best_hps.get('psz32')} after convolution 32, and {best_hps.get('psz64')} after convolution 64.
+    Optimal filter sizes: {best_hps.get('fsz32')} for convolution 32, {best_hps.get('fsz64')} for convolution 64, {best_hps.get('fsz128')} for conv128.
+    Optimal Number of convolutions: {best_hps.get('ncv32')} for convolution 32, {best_hps.get('ncv64')} for convolution 64, {best_hps.get('ncv128')} for conv128.
     """)
     model = tuner.hypermodel.build(best_hps)
     tuner.results_summary()
