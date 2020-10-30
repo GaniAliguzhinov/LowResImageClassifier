@@ -25,3 +25,5 @@ https://nickcdryan.com/2017/06/13/dropconnect-implementation-in-python-and-tenso
 http://proceedings.mlr.press/v28/wan13.pdf
 
 https://www.tensorflow.org/tutorials/keras/keras_tuner
+
+https://www.kaggle.com/yadavsarthak/residual-networks-and-mnist
