@@ -197,7 +197,10 @@ def scheduler(epoch, lr, INIT_LR=INITIAL_LR, schedule=SCHEDULE):
         return INIT_LR * 0.001
 
 learning_rate_reduction = tf.keras.callbacks.LearningRateScheduler(scheduler)
-
+def get_lr_metric(optimizer):
+    def lr(y_true, y_pred):
+        return optimizer.lr
+    return lr
 earlystopper = EarlyStopping(monitor='val_loss', min_delta=0,
                              patience=3, verbose=1, mode='auto')
 callbacks = [learning_rate_reduction]
@@ -301,9 +304,10 @@ def model_builder(hp):
     
     loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
     optimizer = tf.keras.optimizers.RMSprop(lr=0.01, rho=0.9, epsilon=1e-08, decay=0.0)
+    
     model2.compile(optimizer= optimizer,
                    loss=loss_fn,
-                   metrics=['accuracy'])
+                   metrics=['accuracy', get_lr_metric(optimizer)])
     return model2
 
 #================================================================================
