@@ -221,8 +221,8 @@ def model_builder(hp):
     
     model2.add(tf.keras.layers.MaxPooling2D(pool_size=(2,2)))
     
-    hp_p_conv = hp.Float('keep_p_conv', min_value = 0.05, max_value = 1.0, step = 0.05)
-    model2.add(DropConnect(hp_p_conv))
+#     hp_p_conv = hp.Float('keep_p_conv', min_value = 0.05, max_value = 1.0, step = 0.05)
+#     model2.add(DropConnect(hp_p_conv))
 
     model2.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu'))
     model2.add(tf.keras.layers.BatchNormalization())
@@ -231,15 +231,15 @@ def model_builder(hp):
 
     model2.add(tf.keras.layers.MaxPooling2D(pool_size=(2,2)))
     
-    model2.add(DropConnect(hp_p_conv))
+#     model2.add(DropConnect(hp_p_conv))
 
     model2.add(tf.keras.layers.Flatten())
     
     model2.add(tf.keras.layers.Dense(256, activation='relu'))
     model2.add(tf.keras.layers.BatchNormalization())
     
-    hp_p_last = hp.Float('keep_p_last', min_value = 0.05, max_value = 1.0, step = 0.05)  
-    model2.add(DropConnect(hp_p_last))
+#     hp_p_last = hp.Float('keep_p_last', min_value = 0.05, max_value = 1.0, step = 0.05)  
+    model2.add(DropConnect(0.6))
 
     model2.add(tf.keras.layers.Dense(10))
     
