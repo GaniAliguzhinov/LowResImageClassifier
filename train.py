@@ -226,11 +226,11 @@ def model_builder(hp):
         ncv128 = hp.Int('ncv128', min_value = 0, max_value = 2, step = 1)   
     else:
         fsz32 = 5
-        fsz64 = 3
+        fsz64 = 5
         fsz128 = 3
         ncv32 = 2
         ncv64 = 2
-        ncv128 = 0
+        ncv128 = 1
       
     for i in range(ncv32):
         model2.add(tf.keras.layers.Conv2D(32, (fsz32, fsz32), activation='relu', padding = 'same'))
@@ -284,8 +284,7 @@ if DO_TUNE:
                          directory = 'my_dir',
                          project_name = 'MNIST_TUNER')   
 
-    tuner.search(Xtrain, Ytrain, validation_data = (Xval, Yval), 
-                 callbacks = [learning_rate_reduction, earlystopper])
+    tuner.search(Xtrain, Ytrain, validation_data = (Xval, Yval), callbacks = [learning_rate_reduction, earlystopper])
 
     # Get the optimal hyperparameters
     best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
@@ -321,7 +320,7 @@ model.evaluate(Xval, Yval, verbose=2)
 #================================================================================
 # TRAINING AND VALIDATION LOSS AND ACCURACY CURVES
 #================================================================================
-if SHOW_PLOTS:
+if SHOW_PLOTS and DO_TRAIN:
     fig, ax = plt.subplots(2,1)
     ax[0].plot(history.history['loss'], color='b', label="Training loss")
     ax[0].plot(history.history['val_loss'], color='r', label="validation loss",axes =ax[0])
