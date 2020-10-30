@@ -6,8 +6,9 @@ Results with 28-8-4 (varying FC layer size, no dropout):
     * 224: (0.0088, 0.9977), (0.0269, 0.9953)
 
     * 256: (?, ?), (0.0261, 0.9957)
-    
-Results for various dropout (FC layer has size 256):
+
+ Optimal filter sizes: 5 for convolution 32, 5 for convolution 64, 3 for conv128.
+ Optimal Number of convolutions: 2 for convolution 32, 2 for convolution 64, 1 for conv128.
     
 # References
 
