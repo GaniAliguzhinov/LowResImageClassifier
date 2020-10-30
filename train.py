@@ -220,10 +220,10 @@ def model_builder(hp):
     if DO_TUNE:
         fsz32 = hp.Int('fsz32', min_value = 3, max_value = 5, step = 2)
         fsz64 = hp.Int('fsz64', min_value = 3, max_value = 5, step = 2)       
-        fsz128 = hp.Int('fsz64', min_value = 3, max_value = 5, step = 2)             
-        ncv32 = hp.Int('fsz64', min_value = 1, max_value = 3, step = 1)       
-        ncv64 = hp.Int('fsz64', min_value = 0, max_value = 2, step = 1)   
-        ncv128 = hp.Int('fsz64', min_value = 0, max_value = 2, step = 1)   
+        fsz128 = hp.Int('fsz128', min_value = 3, max_value = 5, step = 2)             
+        ncv32 = hp.Int('ncv32', min_value = 1, max_value = 3, step = 1)       
+        ncv64 = hp.Int('ncv64', min_value = 0, max_value = 2, step = 1)   
+        ncv128 = hp.Int('ncv128', min_value = 0, max_value = 2, step = 1)   
     else:
         fsz32 = 5
         fsz64 = 3
