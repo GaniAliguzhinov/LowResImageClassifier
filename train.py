@@ -250,7 +250,7 @@ def model_builder(hp):
     for i in range(ncv128):
         model2.add(tf.keras.layers.Conv2D(128, (fsz128, fsz128), activation='relu', padding = 'same'))
         model2.add(tf.keras.layers.BatchNormalization())
-    if mcv128 > 0:
+    if ncv128 > 0:
         model2.add(tf.keras.layers.MaxPooling2D(pool_size=(psz128, psz128)))
     
 #     model2.add(DropConnect(hp_p_conv))
