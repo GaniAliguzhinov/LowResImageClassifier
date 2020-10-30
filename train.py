@@ -284,7 +284,7 @@ if DO_TUNE:
                          directory = 'my_dir',
                          project_name = 'MNIST_TUNER')   
 
-    tuner.search(Xtrain, Ytrain, epochs = SCHEDULE[0] + 2*SCHEDULE[1] + 4*SCHEDULE[2], validation_data = (Xval, Yval), 
+    tuner.search(Xtrain, Ytrain, validation_data = (Xval, Yval), 
                  callbacks = [learning_rate_reduction, earlystopper])
 
     # Get the optimal hyperparameters
