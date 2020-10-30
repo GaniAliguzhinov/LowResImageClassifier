@@ -265,6 +265,40 @@ def model_builder(hp):
 
     model2.add(tf.keras.layers.Dense(10))
     
+#     model2 = tf.keras.models.Sequential([tf.keras.layers.Lambda(normalize, input_shape=(INPUT_WIDTH,INPUT_HEIGHT,CHANNELS))])
+
+
+#     model2.add(tf.keras.layers.Conv2D(8, (3, 3), activation='relu', padding = 'same', strides=(2, 2)))
+#     model2.add(tf.keras.layers.BatchNormalization())
+
+#     model2.add(tf.keras.layers.Conv2D(8, (3, 3), activation='relu', padding = 'same'))
+#     model2.add(tf.keras.layers.BatchNormalization())
+
+
+#     model2.add(tf.keras.layers.Conv2D(16, (3, 3), activation='relu', padding = 'same', strides=(2,2)))
+#     model2.add(tf.keras.layers.BatchNormalization())
+
+#     model2.add(tf.keras.layers.Conv2D(16, (3, 3), activation='relu', padding = 'same'))
+#     model2.add(tf.keras.layers.BatchNormalization())
+
+
+#     model2.add(tf.keras.layers.Conv2D(32, (3, 3), activation='relu', padding = 'same', strides=(2,2)))
+#     model2.add(tf.keras.layers.BatchNormalization())
+
+#     model2.add(tf.keras.layers.Conv2D(32, (3, 3), activation='relu', padding = 'same'))
+#     model2.add(tf.keras.layers.BatchNormalization())
+
+#     model2.add(tf.keras.layers.Flatten())
+
+#     model2.add(tf.keras.layers.Dense(128, activation='relu'))
+#     model2.add(DropConnect(0.6))
+#     model2.add(tf.keras.layers.Dense(64, activation='relu'))
+#     model2.add(DropConnect(0.6))
+#     model2.add(tf.keras.layers.Dense(32, activation='relu'))
+#     model2.add(DropConnect(0.6))
+
+#     model2.add(tf.keras.layers.Dense(10))
+    
     loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
     optimizer = tf.keras.optimizers.RMSprop(lr=0.01, rho=0.9, epsilon=1e-08, decay=0.0)
     model2.compile(optimizer= optimizer,
