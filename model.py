@@ -13,22 +13,18 @@ class DropConnect(tf.keras.layers.Layer):
             return inputs
         return self.dropout(inputs) * self.p
 def getmodel():
-    return getres()
+    return check2()
 
-def check():
-    class Model(tf.keras.Model):
-        def __init__(self):
-            super(Model, self).__init__()
-            self.inp = tf.keras.layers.InputLayer(input_shape=(INPUT_WIDTH, INPUT_HEIGHT, CHANNELS), name='input')
-            self.conv = tf.keras.layers.Conv2D(16, (3, 3), activation='relu', padding='same', strides=(2,2))
-            self.flatten = tf.keras.layers.Flatten()
-            self.dense = tf.keras.layers.Dense(10, activation = 'relu')
-        def call(self, inputs, training=False):
-            x = self.inp(inputs)
-
-            return self.dense(self.flatten(self.conv(x)))
-
-    model = Model()
+def check2():
+    inputs = tf.keras.Input((INPUT_WIDTH, INPUT_HEIGHT, CHANNELS))
+    conv = tf.keras.layers.Conv2D(6, (3, 3), activation='relu', padding='same', strides=(2,2))
+    bn = tf.keras.layers.BatchNormalization()
+    x = conv(inputs)
+    x = bn(x)
+    x = tf.keras.layers.Flatten()(x)
+    outputs = tf.keras.layers.Dense(10, activation='relu')(x)
+    model = tf.keras.Model(inputs = inputs, outputs = outputs)
+    model.summary()
     loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
     optimizer = tf.keras.optimizers.RMSprop(lr=0.01, rho=0.9, epsilon=1e-08, decay=0.0)
     model.compile(optimizer= optimizer,
