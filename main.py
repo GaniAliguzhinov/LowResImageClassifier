@@ -2,6 +2,7 @@ from imports import *
 from load import load_data, mapValues, getgen, normalize
 from schedule import getcallbacks
 from model import getmodel
+
 Xall, Yall, Xtest, Ytest = load_data()
 Xall, Xtest = Xall.astype(np.float32), Xtest.astype(np.float32)
 Nall, Ntest = Xall.shape[0], Xtest.shape[0]
@@ -13,7 +14,7 @@ Xall, Xtest = normalize(Xall), normalize(Xtest)
 
 print("Intensities after scaling: min={}, max={}, mean={}, std={}".format(np.min(Xall.flatten()), np.max(Xall.flatten()), np.mean(Xall.flatten()), np.std(Xall.flatten())))
 
-Xtrain, Xval, Ytrain, Yval = train_test_split(Xall, Yall, test_size=0.1, random_state = 13)
+Xtrain, Xval, Ytrain, Yval = train_test_split(Xall, Yall, test_size=0.3, random_state = SEED)
 print("Train data: {}, Validation data: {}".format(Xtrain.shape, Xval.shape))
 model = getmodel()
 if DO_TRAIN:
@@ -25,8 +26,8 @@ if DO_TRAIN:
                              callbacks = getcallbacks())
 else:
     model.load_weights(WEIGHTS_NAME)
-model.summary()
 print("Model performance on the validation set:")
+model.summary()
 model.evaluate(Xval, Yval, verbose=2)
 results = tf.nn.softmax(model.predict(Xtest)).numpy()
 results = np.argmax(results,axis = 1)
