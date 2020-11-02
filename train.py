@@ -197,7 +197,10 @@ def scheduler(epoch, lr, INIT_LR=INITIAL_LR, schedule=SCHEDULE):
         return INIT_LR * 0.001
 
 learning_rate_reduction = tf.keras.callbacks.LearningRateScheduler(scheduler)
-
+def get_lr_metric(optimizer):
+    def lr(y_true, y_pred):
+        return optimizer.lr
+    return lr
 earlystopper = EarlyStopping(monitor='val_loss', min_delta=0,
                              patience=3, verbose=1, mode='auto')
 callbacks = [learning_rate_reduction]
@@ -226,11 +229,11 @@ def model_builder(hp):
         ncv128 = hp.Int('ncv128', min_value = 0, max_value = 2, step = 1)   
     else:
         fsz32 = 5
-        fsz64 = 3
+        fsz64 = 5
         fsz128 = 3
         ncv32 = 2
         ncv64 = 2
-        ncv128 = 0
+        ncv128 = 1
       
     for i in range(ncv32):
         model2.add(tf.keras.layers.Conv2D(32, (fsz32, fsz32), activation='relu', padding = 'same'))
@@ -265,11 +268,46 @@ def model_builder(hp):
 
     model2.add(tf.keras.layers.Dense(10))
     
+#     model2 = tf.keras.models.Sequential([tf.keras.layers.Lambda(normalize, input_shape=(INPUT_WIDTH,INPUT_HEIGHT,CHANNELS))])
+
+
+#     model2.add(tf.keras.layers.Conv2D(8, (3, 3), activation='relu', padding = 'same', strides=(2, 2)))
+#     model2.add(tf.keras.layers.BatchNormalization())
+
+#     model2.add(tf.keras.layers.Conv2D(8, (3, 3), activation='relu', padding = 'same'))
+#     model2.add(tf.keras.layers.BatchNormalization())
+
+
+#     model2.add(tf.keras.layers.Conv2D(16, (3, 3), activation='relu', padding = 'same', strides=(2,2)))
+#     model2.add(tf.keras.layers.BatchNormalization())
+
+#     model2.add(tf.keras.layers.Conv2D(16, (3, 3), activation='relu', padding = 'same'))
+#     model2.add(tf.keras.layers.BatchNormalization())
+
+
+#     model2.add(tf.keras.layers.Conv2D(32, (3, 3), activation='relu', padding = 'same', strides=(2,2)))
+#     model2.add(tf.keras.layers.BatchNormalization())
+
+#     model2.add(tf.keras.layers.Conv2D(32, (3, 3), activation='relu', padding = 'same'))
+#     model2.add(tf.keras.layers.BatchNormalization())
+
+#     model2.add(tf.keras.layers.Flatten())
+
+#     model2.add(tf.keras.layers.Dense(128, activation='relu'))
+#     model2.add(DropConnect(0.6))
+#     model2.add(tf.keras.layers.Dense(64, activation='relu'))
+#     model2.add(DropConnect(0.6))
+#     model2.add(tf.keras.layers.Dense(32, activation='relu'))
+#     model2.add(DropConnect(0.6))
+
+#     model2.add(tf.keras.layers.Dense(10))
+    
     loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
     optimizer = tf.keras.optimizers.RMSprop(lr=0.01, rho=0.9, epsilon=1e-08, decay=0.0)
+    
     model2.compile(optimizer= optimizer,
                    loss=loss_fn,
-                   metrics=['accuracy'])
+                   metrics=['accuracy', get_lr_metric(optimizer)])
     return model2
 
 #================================================================================
@@ -284,8 +322,7 @@ if DO_TUNE:
                          directory = 'my_dir',
                          project_name = 'MNIST_TUNER')   
 
-    tuner.search(Xtrain, Ytrain, epochs = SCHEDULE[0] + 2*SCHEDULE[1] + 4*SCHEDULE[2], validation_data = (Xval, Yval), 
-                 callbacks = [learning_rate_reduction, earlystopper])
+    tuner.search(Xtrain, Ytrain, validation_data = (Xval, Yval), callbacks = [learning_rate_reduction, earlystopper])
 
     # Get the optimal hyperparameters
     best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
@@ -301,7 +338,7 @@ else:
     model = model_builder(1)
 
 
-
+model.summary()
 #================================================================================
 # TRAIN
 #================================================================================
@@ -321,7 +358,7 @@ model.evaluate(Xval, Yval, verbose=2)
 #================================================================================
 # TRAINING AND VALIDATION LOSS AND ACCURACY CURVES
 #================================================================================
-if SHOW_PLOTS:
+if SHOW_PLOTS and DO_TRAIN:
     fig, ax = plt.subplots(2,1)
     ax[0].plot(history.history['loss'], color='b', label="Training loss")
     ax[0].plot(history.history['val_loss'], color='r', label="validation loss",axes =ax[0])
