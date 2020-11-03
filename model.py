@@ -14,22 +14,61 @@ class DropConnect(tf.keras.layers.Layer):
         return self.dropout(inputs) * self.p
 def getmodel():
     return check2()
+def get_lr_metric(optimizer):
+    def lr(y_true, y_pred):
+        return optimizer.lr
+    return lr
 
 def check2():
     inputs = tf.keras.Input((INPUT_WIDTH, INPUT_HEIGHT, CHANNELS))
-    conv = tf.keras.layers.Conv2D(6, (3, 3), activation='relu', padding='same', strides=(2,2))
+
+    conv = tf.keras.layers.Conv2D(16, (3, 3), activation='relu', padding='same', strides=(2,2))
     bn = tf.keras.layers.BatchNormalization()
     x = conv(inputs)
+    x1 = bn(x)
+    conv = tf.keras.layers.Conv2D(16, (3, 3), activation='relu', padding='same')
+    bn = tf.keras.layers.BatchNormalization()
+    x = conv(x1)
     x = bn(x)
+    conv = tf.keras.layers.Conv2D(16, (3, 3), activation='relu', padding='same')
+    bn = tf.keras.layers.BatchNormalization()
+    x = conv(x)
+    x2 = bn(x)
+
+    x = x2
+    # x = tf.keras.layers.Add()([x1, x2])
+
+    conv = tf.keras.layers.Conv2D(32, (3, 3), activation='relu', padding='same', strides=(2,2))
+    bn = tf.keras.layers.BatchNormalization()
+    x = conv(x)
+    x1 = bn(x)
+    conv = tf.keras.layers.Conv2D(32, (3, 3), activation='relu', padding='same')
+    bn = tf.keras.layers.BatchNormalization()
+    x = conv(x1)
+    x = bn(x)
+    conv = tf.keras.layers.Conv2D(32, (3, 3), activation='relu', padding='same')
+    bn = tf.keras.layers.BatchNormalization()
+    x = conv(x)
+    x2 = bn(x)
+
+    x = x2
+    # x = tf.keras.layers.Add()([x1, x2])
+
     x = tf.keras.layers.Flatten()(x)
+
+    x = tf.keras.layers.Dense(128, activation='relu')(x)
+    x = DropConnect(0.6)(x)
     outputs = tf.keras.layers.Dense(10, activation='relu')(x)
+
     model = tf.keras.Model(inputs = inputs, outputs = outputs)
     model.summary()
     loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
-    optimizer = tf.keras.optimizers.RMSprop(lr=0.01, rho=0.9, epsilon=1e-08, decay=0.0)
+    optimizer = tf.keras.optimizers.RMSprop(lr=INITIAL_LR, rho=0.9, epsilon=1e-08, decay=0.1)
+    optimizer = tf.keras.optimizers.Adam(INITIAL_LR)
+    optimizer = tf.keras.optimizers.SGD(INITIAL_LR, decay=5e-4)
     model.compile(optimizer= optimizer,
                    loss=loss_fn,
-                   metrics=['accuracy'])
+                   metrics=['accuracy', get_lr_metric(optimizer)])
     return model
 def getres():
     x = tf.keras.layers.InputLayer((INPUT_WIDTH, INPUT_HEIGHT, CHANNELS), name='input_layer')

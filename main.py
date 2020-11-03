@@ -1,6 +1,6 @@
 from imports import *
 from load import load_data, mapValues, getgen, normalize
-from schedule import getcallbacks
+from schedule import getcallbacks, totalepochs
 from model import getmodel
 
 Xall, Yall, Xtest, Ytest = load_data()
@@ -14,20 +14,19 @@ Xall, Xtest = normalize(Xall), normalize(Xtest)
 
 print("Intensities after scaling: min={}, max={}, mean={}, std={}".format(np.min(Xall.flatten()), np.max(Xall.flatten()), np.mean(Xall.flatten()), np.std(Xall.flatten())))
 
-Xtrain, Xval, Ytrain, Yval = train_test_split(Xall, Yall, test_size=0.3, random_state = SEED)
+Xtrain, Xval, Ytrain, Yval = train_test_split(Xall, Yall, test_size=0.1, random_state = SEED)
 print("Train data: {}, Validation data: {}".format(Xtrain.shape, Xval.shape))
 model = getmodel()
 if DO_TRAIN:
     history=model.fit_generator(generator = getgen().flow(Xtrain, Ytrain, batch_size=BS),
                              steps_per_epoch = int(Xtrain.shape[0]/BS),
-                             epochs = SCHEDULE[0] + 2*SCHEDULE[1] + 4*SCHEDULE[2],
+                             epochs = totalepochs(SCHEDULE),
                              validation_data = (Xval, Yval),
                             verbose = 2,
-                             callbacks = getcallbacks())
+                             callbacks = getcallbacks(Xtrain))
 else:
     model.load_weights(WEIGHTS_NAME)
 print("Model performance on the validation set:")
-model.summary()
 model.evaluate(Xval, Yval, verbose=2)
 results = tf.nn.softmax(model.predict(Xtest)).numpy()
 results = np.argmax(results,axis = 1)
